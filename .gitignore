@@ -1,0 +1,90 @@
+.env
+
+
+# ========================
+# SECRETS — never commit
+# ========================
+.env
+appsettings.Development.json
+appsettings.*.json
+!appsettings.json
+
+# ========================
+# Build output
+# ========================
+**/bin/
+**/obj/
+**/out/
+**/publish/
+
+# ========================
+# NuGet
+# ========================
+*.nupkg
+*.snupkg
+.nuget/
+packages/
+project.lock.json
+project.fragment.lock.json
+
+# ========================
+# .NET user secrets
+# ========================
+*.pfx
+*.key
+secrets.json
+
+# ========================
+# Visual Studio
+# ========================
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.userprefs
+*.pidb
+_ReSharper*/
+*.DotSettings.user
+
+# ========================
+# Rider (JetBrains)
+# ========================
+.idea/
+*.sln.iml
+
+# ========================
+# VS Code
+# ========================
+.vscode/
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# ========================
+# Test results
+# ========================
+TestResults/
+*.trx
+*.coveragexml
+coverage*/
+*.coverage
+
+# ========================
+# Entity Framework
+# ========================
+*.mdf
+*.ldf
+*.ndf
+
+# ========================
+# Docker
+# ========================
+docker-compose.override.yml
+
+# ========================
+# OS generated
+# ========================
+.DS_Store
+Thumbs.db
+Desktop.ini
+ehthumbs.db

@@ -1,0 +1,105 @@
+
+POST http://localhost:5049/api/auth/register
+Content-Type: application/json
+
+{
+    "email": "test2@example.com",
+    "password": "Password123!"
+}
+
+###
+POST http://localhost:5049/api/auth/login
+Content-Type: application/json
+
+{
+    "email": "test2@example.com",
+    "password": "Password123!"
+}
+
+###
+GET http://localhost:5049/api/auth/secure
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6ImMzNmYyMTM1LWEzMzEtNDU1MS04MzBmLWZjYjQ0NzU4OTVhMCIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6InRlc3RAZXhhbXBsZS5jb20iLCJleHAiOjE3NzYxODc3ODQsImlzcyI6IkpvYlBvcnRhbEFQSSIsImF1ZCI6IkpvYlBvcnRhbFVzZXJzIn0.gqQ2qfxy95uz3iiFt5nDUyBK87DzZL_cwjyoVgXKHN4
+
+###
+GET http://localhost:5049/api/auth/admin
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6ImUxOTJkODNkLWMyOWEtNDkxNC05Yzk3LTM3ZTk0MWQ2MDEwYiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6InRlc3QyQGV4YW1wbGUuY29tIiwiZXhwIjoxNzc2MTkzMjgwLCJpc3MiOiJKb2JQb3J0YWxBUEkiLCJhdWQiOiJKb2JQb3J0YWxVc2VycyJ9.KSHdsWD359p2xBYaWv9LiJrsMDwEB7S8_uPDZOAg7vs
+
+###
+POST http://localhost:5049/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "user1@test.com",
+  "password": "Password123!"
+}
+
+###
+POST http://localhost:5049/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "user1@test.com",
+  "password": "Password123!"
+}
+
+###
+POST http://localhost:5049/api/jobs
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjcyYTNhYmYyLWZjZmUtNDczOS05NzU3LTczM2ZhZDQwODkyMCIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6InVzZXIxQHRlc3QuY29tIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjpbIlVzZXIiLCJBZG1pbiJdLCJleHAiOjE3NzYxOTY2OTMsImlzcyI6IkpvYlBvcnRhbEFQSSIsImF1ZCI6IkpvYlBvcnRhbFVzZXJzIn0.r3SatX43zmdXq8RjDtDOd3xO14UZAo0z3Yp4dZjQ8G4
+Content-Type: application/json
+
+{
+  "title": "Backend Developer",
+  "description": "Need .NET developer"
+}
+
+###
+GET http://localhost:5049/api/jobs
+
+###
+POST http://localhost:5049/api/auth/register
+Content-Type: application/json
+
+{
+    "email": "test3@example.com",
+    "password": "Password123!"
+}
+
+###
+POST http://localhost:5049/api/auth/login
+Content-Type: application/json
+
+{
+    "email": "test3@example.com",
+    "password": "Password123!"
+}
+
+###
+POST http://localhost:5049/api/jobs/b75fe93d-7a4b-4bb0-a298-40130640c17c/apply
+Authorization: Bearer 
+
+###
+GET http://localhost:5049/api/jobs?page=1&pageSize=2
+
+###
+POST http://localhost:5049/api/auth/refresh?refreshToken=fe000835-0b97-459c-addf-327053b886be
+
+
+#docker requests
+
+###
+POST http://localhost:8080/api/auth/register
+Content-Type: application/json
+
+{
+    "email": "test1@example.com",
+    "password": "Password123!"
+}
+ 
+###
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+    "email": "test1@example.com",
+    "password": "Password123!"
+}
