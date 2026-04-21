@@ -29,7 +29,7 @@ POST http://localhost:5049/api/auth/register
 Content-Type: application/json
 
 {
-  "email": "user1@test.com",
+  "email": "cisod56717@mugstock.com",
   "password": "Password123!"
 }
 
@@ -38,7 +38,7 @@ POST http://localhost:5049/api/auth/login
 Content-Type: application/json
 
 {
-  "email": "user1@test.com",
+  "email": "cisod56717@mugstock.com",
   "password": "Password123!"
 }
 
@@ -103,3 +103,49 @@ Content-Type: application/json
     "email": "test1@example.com",
     "password": "Password123!"
 }
+
+### 1. Register — check your email after this
+POST http://localhost:8080/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "xofomop458@pmdeal.com",
+  "password": "Test@1234"
+}
+
+### 2. Try login before verifying — should get 403
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "xofomop458@pmdeal.com",
+  "password": "Test@1234"
+}
+
+### 3. Click the link in your email, or call directly:
+GET http://localhost:8080/api/auth/verify-email?email=test@example.com&token=YOUR_TOKEN
+
+
+###
+POST http://localhost:8080/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "cisod56717@mugstock.com",
+  "password": "Password123!"
+}
+
+###
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "cisod56717@mugstock.com",
+  "password": "Password123!"
+}
+
+POST http://localhost:8080/api/jobs/{jobId}/apply
+Authorization: Bearer YOUR_TOKEN
+Content-Type: multipart/form-data
+
+resume: [attach a PDF file]

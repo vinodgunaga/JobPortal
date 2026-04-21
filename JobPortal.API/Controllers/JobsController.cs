@@ -39,14 +39,21 @@ public class JobsController : BaseController
 
     [Authorize(Roles = "User")]
     [HttpPost("{jobId}/apply")]
-    public async Task<IActionResult> Apply(Guid jobId)
+    public async Task<IActionResult> Apply(Guid jobId, IFormFile resume)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
         if (string.IsNullOrEmpty(userId))
             return Unauthorized();
+
+        if (resume == null || resume.Length == 0)
+            return BadRequest(new { message = "Resume file is required" });
+
+        using var stream = new MemoryStream();
+        await resume.CopyToAsync(stream);
+        stream.Position = 0;
             
-        await _jobService.ApplyJob(jobId, userId);
+        await _jobService.ApplyJob(jobId, userId, stream, resume.FileName);
 
         return Ok("Applied successfully");
     }

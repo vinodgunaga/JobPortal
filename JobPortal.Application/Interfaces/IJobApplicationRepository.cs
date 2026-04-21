@@ -1,4 +1,3 @@
-using System;
 using JobPortal.Domain;
 
 namespace JobPortal.Application.Interfaces;

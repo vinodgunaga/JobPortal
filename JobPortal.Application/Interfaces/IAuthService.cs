@@ -10,6 +10,8 @@ public interface IAuthService
 
     Task<Result<string>> Refresh(string refreshToken);
 
+    Task<Result<string>> VerifyEmail(string email, string token);
+
     Task<Result<string>> Secure();
 
     Task<Result<string>> AdminOnly();

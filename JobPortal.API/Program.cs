@@ -1,7 +1,6 @@
 using JobPortal.Domain;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using JobPortal.Application.Interfaces;
@@ -14,6 +13,8 @@ using JobPortal.API.Middleware;
 using JobPortal.Infrastructure.Persistence;
 using JobPortal.Infrastructure.Persistence.Repositories;
 using JobPortal.API.Extensions;
+using Microsoft.Extensions.FileProviders;
+using JobPortal.Application.Common;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -60,6 +61,13 @@ builder.Services.AddScoped<IJobRepository, JobRepository>();
 builder.Services.AddScoped<IJobApplicationRepository, JobApplicationRepository>();
 builder.Services.AddValidatorsFromAssemblyContaining<CreateJobRequestValidator>();
 builder.Services.AddFluentValidationAutoValidation();
+builder.Services.Configure<EmailSettings>(
+builder.Configuration.GetSection("Email"));
+builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.Configure<FileStorageSettings>(
+    builder.Configuration.GetSection("FileStorage"));
+builder.Services.AddScoped<IFileStorageService, LocalFileStorageService>();
+builder.Services.AddScoped<FileValidator>();
 
 var app = builder.Build();
 
@@ -77,6 +85,12 @@ if (app.Environment.IsDevelopment())
 
 await app.Services.ApplyMigrationsAsync();
 await app.Services.SeedRolesAsync();
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(Directory.GetCurrentDirectory(), "uploads")),
+    RequestPath = "/uploads"
+});
 
 app.Run();
 

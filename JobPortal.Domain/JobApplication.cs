@@ -8,6 +8,10 @@ public class JobApplication
 
     public Guid JobId { get; set; }
 
+    public string? ResumeUrl { get; set; }
+
+    public DateTime AppliedAt { get; set; } = DateTime.UtcNow;
+
     public AppUser? User { get; set; }
 
     public Job? Job { get; set; }

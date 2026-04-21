@@ -8,7 +8,6 @@
     <Folder Include="Common\Exceptions\" />
     <Folder Include="Common\Settings\" />
     <Folder Include="DTOs\" />
-    <Folder Include="Interfaces\" />
     <Folder Include="Validators\" />
   </ItemGroup>
 

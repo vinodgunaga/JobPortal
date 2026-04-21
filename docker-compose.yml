@@ -63,6 +63,13 @@ services:
       - Jwt__Key=${JWT_KEY}
       - Jwt__Issuer=JobPortalAPI
       - Jwt__Audience=JobPortalUsers
+      - Email__Host=${EMAIL_HOST}
+      - Email__Port=${EMAIL_PORT}
+      - Email__Username=${EMAIL_USERNAME}
+      - Email__Password=${EMAIL_PASSWORD}
+      - Email__FromAddress=${EMAIL_FROM_ADDRESS}
+      - Email__FromName=${EMAIL_FROM_NAME}
+      - AppUrl=${APP_URL}
     restart: on-failure
 
   db:

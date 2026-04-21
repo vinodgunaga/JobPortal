@@ -1,3 +1,4 @@
+using JobPortal.Application.Common;
 using JobPortal.Application.Common.Exceptions;
 using JobPortal.Application.Common.Models;
 using JobPortal.Application.DTOs;
@@ -9,12 +10,20 @@ namespace JobPortal.Infrastructure.Services;
 public class JobService : IJobService
 {
     private readonly IJobRepository _jobRepo;
-    private readonly IJobApplicationRepository _applicationRepo;    
+    private readonly IJobApplicationRepository _applicationRepo;
+    private readonly IFileStorageService _fileStorage;
+    private readonly FileValidator _fileValidator;
 
-    public JobService(IJobRepository jobRepo, IJobApplicationRepository applicationRepo)
+    public JobService(
+        IJobRepository jobRepo, 
+        IJobApplicationRepository applicationRepo,
+        IFileStorageService fileStorage,
+        FileValidator fileValidator)
     {
         _jobRepo = jobRepo;
         _applicationRepo = applicationRepo;
+        _fileStorage = fileStorage;
+        _fileValidator = fileValidator;
     }
     
     public async Task<JobResponse> CreateJob(CreateJobRequest request, string userId)
@@ -56,7 +65,7 @@ public class JobService : IJobService
         };
     }
 
-    public async Task ApplyJob(Guid jobId, string userId)
+    public async Task ApplyJob(Guid jobId, string userId, Stream fileStream, string fileName)
     {
 
         var job = await _jobRepo.GetByIdAsync(jobId)
@@ -66,11 +75,17 @@ public class JobService : IJobService
         if (alreadyApplied)
             throw new InvalidOperationAppException("You have already applied to this job");
 
+        _fileValidator.Validate(fileName, fileStream.Length);
+
+        var resumeUrl = await _fileStorage.SaveResumeAsync(fileStream, fileName);
+
         await _applicationRepo.CreateAsync(new JobApplication
         {
             Id = Guid.NewGuid(),
             JobId = jobId,
-            UserId = userId
+            UserId = userId,
+            ResumeUrl = resumeUrl,
+            AppliedAt = DateTime.UtcNow
         });
     }
 }
