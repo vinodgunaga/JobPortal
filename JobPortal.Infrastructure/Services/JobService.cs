@@ -1,6 +1,5 @@
 using JobPortal.Application.Common;
 using JobPortal.Application.Common.Exceptions;
-using JobPortal.Application.Common.Models;
 using JobPortal.Application.DTOs;
 using JobPortal.Application.Interfaces;
 using JobPortal.Domain;
@@ -26,7 +25,7 @@ public class JobService : IJobService
         _fileValidator = fileValidator;
     }
     
-    public async Task<JobResponse> CreateJob(CreateJobRequest request, string userId)
+    public async Task<Job> CreateJob(CreateJobRequest request, string userId)
     {
         var job = new Job
         {
@@ -34,34 +33,43 @@ public class JobService : IJobService
             Title = request.Title!,
             Description = request.Description!,
             CreatedBy = userId,
-            CreatedAt = DateTime.UtcNow
+            CreatedAt = DateTime.UtcNow,
+            Location = request.Location,
+            JobType = request.JobType,
+            ExperienceLevel = request.ExperienceLevel,
+            MinSalary = request.MinSalary,
+            MaxSalary = request.MaxSalary,
+            Company = request.Company,
+            Deadline = request.Deadline,
+            Skills = request.Skills,
+            IsActive = true
         };
 
-        var created = await _jobRepo.CreateAsync(job);
-
-        return new JobResponse(
-            created.Id, 
-            created.Title, 
-            created.Description, 
-            created.CreatedBy
-            );
+        return await _jobRepo.CreateAsync(job);       
     }
 
-    public async Task<PagedResult<JobResponse>> GetJobs(PaginationParams param)
+    public async Task<PagedResult<JobResponse>> GetJobs(JobQueryParams queryParams)
     {
-        var (items, total) = await _jobRepo.GetPagedAsync(param);
+        var pagedJobs = await _jobRepo.GetPagedAsync(queryParams);
 
         return new PagedResult<JobResponse>
         {
+            Items = pagedJobs.Items.Select(MapToResponse).ToList(),
+            TotalCount = pagedJobs.TotalCount,
+            Page = pagedJobs.Page,
+            PageSize = pagedJobs.PageSize
+        };
+    }
+
+    // Keep old method for backward compatibility
+    public async Task<object> GetJobs(PaginationParams param)
+    {
+        var (items, total) = await _jobRepo.GetPagedAsync(param);
+
+        return new
+        {
             Total = total,
-            Data = items.Select(j => new JobResponse
-            (
-                j.Id, 
-                j.Title, 
-                j.Description, 
-                j.CreatedBy
-            ))
-            .ToList()
+            Data = items.Select(MapToResponse).ToList()
         };
     }
 
@@ -87,5 +95,25 @@ public class JobService : IJobService
             ResumeUrl = resumeUrl,
             AppliedAt = DateTime.UtcNow
         });
+    }
+
+    private static JobResponse MapToResponse(Job job)
+    {
+        return new JobResponse(
+            job.Id,
+            job.Title,
+            job.Description,
+            job.CreatedBy,
+            job.CreatedAt,
+            job.Location,
+            job.JobType,
+            job.ExperienceLevel,
+            job.MinSalary,
+            job.MaxSalary,
+            job.Company,
+            job.IsActive,
+            job.Deadline,
+            job.Skills
+        );
     }
 }

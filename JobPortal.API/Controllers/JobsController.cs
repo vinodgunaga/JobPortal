@@ -31,11 +31,26 @@ public class JobsController : BaseController
         return Ok(job);
     }
 
+    /// <summary>
+    /// Get jobs with advanced filtering, sorting, and pagination
+    /// </summary>
+    /// <remarks>
+    /// Sample requests:
+    /// 
+    ///     GET /api/jobs?page=1&amp;pageSize=10
+    ///     GET /api/jobs?search=developer&amp;location=bangalore
+    ///     GET /api/jobs?jobType=FullTime&amp;experienceLevel=MidLevel
+    ///     GET /api/jobs?minSalary=50000&amp;maxSalary=100000
+    ///     GET /api/jobs?sortBy=salary&amp;order=desc
+    ///     GET /api/jobs?skills=react,node&amp;location=mumbai
+    /// 
+    /// </remarks>
     [HttpGet]
-    public async Task<IActionResult> GetJobs([FromQuery] PaginationParams param)
+    public async Task<IActionResult> GetJobs([FromQuery] JobQueryParams queryParams)
     {
-        return Ok(await _jobService.GetJobs(param));
-    }
+        var result = await _jobService.GetJobs(queryParams);
+        return Ok(result);
+    }   
 
     [Authorize(Roles = "User")]
     [HttpPost("{jobId}/apply")]
