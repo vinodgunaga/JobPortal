@@ -11,13 +11,13 @@ public class JobService : IJobService
     private readonly IJobRepository _jobRepo;
     private readonly IJobApplicationRepository _applicationRepo;
     private readonly IFileStorageService _fileStorage;
-    private readonly FileValidator _fileValidator;
+    private readonly IFileValidator _fileValidator;
 
     public JobService(
         IJobRepository jobRepo, 
         IJobApplicationRepository applicationRepo,
         IFileStorageService fileStorage,
-        FileValidator fileValidator)
+        IFileValidator fileValidator)
     {
         _jobRepo = jobRepo;
         _applicationRepo = applicationRepo;

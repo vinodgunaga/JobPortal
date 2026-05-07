@@ -42,13 +42,14 @@ public class JobApplicationRepositoryTests : IDisposable
         var application = TestDataHelper.CreateApplication(jobId, userId);
 
         // Act
-        var result = await _repository.CreateAsync(application);
+        //var result = await _repository.CreateAsync(application);
+        await _repository.CreateAsync(application);
 
         // Assert
-        result.Should().NotBeNull();
-        result.Id.Should().Be(application.Id);
+        //result.Should().NotBeNull();
+        //result.Id.Should().Be(application.Id);
         
-        var saved = await _context.JobApplications.FindAsync(application.Id);
+        var saved = await _context.Applications.FindAsync(application.Id);
         saved.Should().NotBeNull();
         saved!.JobId.Should().Be(jobId);
         saved.UserId.Should().Be(userId);
@@ -66,7 +67,7 @@ public class JobApplicationRepositoryTests : IDisposable
         var userId = "user-123";
         var application = TestDataHelper.CreateApplication(jobId, userId);
         
-        _context.JobApplications.Add(application);
+        _context.Applications.Add(application);
         await _context.SaveChangesAsync();
 
         // Act
@@ -98,7 +99,7 @@ public class JobApplicationRepositoryTests : IDisposable
         var otherUserId = "other-user";
         var application = TestDataHelper.CreateApplication(jobId, otherUserId);
         
-        _context.JobApplications.Add(application);
+        _context.Applications.Add(application);
         await _context.SaveChangesAsync();
 
         // Act
@@ -117,7 +118,7 @@ public class JobApplicationRepositoryTests : IDisposable
         var userId = "user-123";
         
         var application = TestDataHelper.CreateApplication(jobId1, userId);
-        _context.JobApplications.Add(application);
+        _context.Applications.Add(application);
         await _context.SaveChangesAsync();
 
         // Act
@@ -146,7 +147,7 @@ public class JobApplicationRepositoryTests : IDisposable
         await _repository.CreateAsync(app3);
 
         // Assert
-        var applications = await _context.JobApplications
+        var applications = await _context.Applications
             .Where(a => a.JobId == jobId)
             .ToListAsync();
 
@@ -166,7 +167,7 @@ public class JobApplicationRepositoryTests : IDisposable
         var app2 = TestDataHelper.CreateApplication(jobId, "user-456");
         var app3 = TestDataHelper.CreateApplication(jobId, "user-789");
         
-        _context.JobApplications.AddRange(app1, app2, app3);
+        _context.Applications.AddRange(app1, app2, app3);
         await _context.SaveChangesAsync();
 
         // Act

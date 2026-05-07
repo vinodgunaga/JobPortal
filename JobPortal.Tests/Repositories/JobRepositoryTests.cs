@@ -114,14 +114,18 @@ public class JobRepositoryTests : IDisposable
         _context.Jobs.AddRange(jobs);
         await _context.SaveChangesAsync();
 
-        var param = new PaginationParams(Page: 1, PageSize: 10);
+        var param = new JobQueryParams
+        {
+            Page = 1,
+            PageSize = 10
+        };
 
         // Act
-        var (items, total) = await _repository.GetPagedAsync(param);
+        var result = await _repository.GetPagedAsync(param);
 
         // Assert
-        items.Should().HaveCount(10);
-        total.Should().Be(15);
+        result.Items.Should().HaveCount(10);
+        result.TotalCount.Should().Be(15);
     }
 
     [Fact]
@@ -132,20 +136,28 @@ public class JobRepositoryTests : IDisposable
         _context.Jobs.AddRange(jobs);
         await _context.SaveChangesAsync();
 
-        var param = new PaginationParams(Page: 2, PageSize: 10);
+        var param = new JobQueryParams
+        {
+            Page = 2,
+            PageSize = 10
+        };
 
         // Act
-        var (items, total) = await _repository.GetPagedAsync(param);
+        var result = await _repository.GetPagedAsync(param);
 
         // Assert
-        items.Should().HaveCount(10);
-        total.Should().Be(25);
-        
+        result.Items.Should().HaveCount(10);
+        result.TotalCount.Should().Be(25);
+
         // Second page should not contain first page items
-        var firstPageParam = new PaginationParams(Page: 1, PageSize: 10);
-        var (firstPageItems, _) = await _repository.GetPagedAsync(firstPageParam);
+        var firstPageParam = new JobQueryParams
+        {
+            Page = 1,
+            PageSize = 10
+        };
+        var firstPageResult = await _repository.GetPagedAsync(firstPageParam);
         
-        items.Should().NotIntersectWith(firstPageItems);
+        result.Items.Should().NotIntersectWith(firstPageResult.Items);
     }
 
     [Fact]
@@ -160,15 +172,22 @@ public class JobRepositoryTests : IDisposable
         });
         await _context.SaveChangesAsync();
 
-        var param = new PaginationParams(Page: 1, PageSize: 10, Title: "React");
+        var param = new JobQueryParams
+            {
+                Page = 1,
+                PageSize = 10,
+                Search = "React"
+            };
 
         // Act
-        var (items, total) = await _repository.GetPagedAsync(param);
+        var result = await _repository.GetPagedAsync(param);
 
         // Assert
-        items.Should().HaveCount(2); // "React Developer" and "Full Stack Developer"
-        total.Should().Be(2);
-        items.Should().OnlyContain(j => j.Title.Contains("React"));
+        result.Items.Should().HaveCount(2);
+        result.TotalCount.Should().Be(2);
+        result.Items.Should().OnlyContain(j =>
+        j.Title.Contains("React") ||
+        j.Description.Contains("React"));
     }
 
     [Fact]
@@ -179,14 +198,19 @@ public class JobRepositoryTests : IDisposable
         _context.Jobs.AddRange(jobs);
         await _context.SaveChangesAsync();
 
-        var param = new PaginationParams(Page: 1, PageSize: 10, Title: "NonExistent");
+        var param = new JobQueryParams
+        {
+            Page = 1,
+            PageSize = 10,
+            Search = "NonExistent"
+        };
 
         // Act
-        var (items, total) = await _repository.GetPagedAsync(param);
+        var result = await _repository.GetPagedAsync(param);
 
         // Assert
-        items.Should().BeEmpty();
-        total.Should().Be(0);
+        result.Items.Should().BeEmpty();
+        result.TotalCount.Should().Be(0);
     }
 
     [Fact]
@@ -197,14 +221,18 @@ public class JobRepositoryTests : IDisposable
         _context.Jobs.AddRange(jobs);
         await _context.SaveChangesAsync();
 
-        var param = new PaginationParams(Page: 3, PageSize: 10);
+        var param = new JobQueryParams
+        {
+            Page = 3,
+            PageSize = 10
+        };
 
         // Act
-        var (items, total) = await _repository.GetPagedAsync(param);
+        var result = await _repository.GetPagedAsync(param);
 
         // Assert
-        items.Should().HaveCount(3); // 23 total, 10 per page = 3 on last page
-        total.Should().Be(23);
+        result.Items.Should().HaveCount(3); // 23 total, 10 per page = 3 on last page
+        result.TotalCount.Should().Be(23);
     }
 
     [Fact]
@@ -215,14 +243,18 @@ public class JobRepositoryTests : IDisposable
         _context.Jobs.AddRange(jobs);
         await _context.SaveChangesAsync();
 
-        var param = new PaginationParams(Page: 10, PageSize: 10);
+        var param = new JobQueryParams
+        {
+            Page = 10,
+            PageSize = 10
+        };
 
         // Act
-        var (items, total) = await _repository.GetPagedAsync(param);
+        var result = await _repository.GetPagedAsync(param);
 
         // Assert
-        items.Should().BeEmpty();
-        total.Should().Be(5);
+        result.Items.Should().BeEmpty();
+        result.TotalCount.Should().Be(5);
     }
 
     [Fact]
@@ -231,15 +263,20 @@ public class JobRepositoryTests : IDisposable
         // Arrange
         _context.Jobs.Add(TestDataHelper.CreateJob("Python Developer", "Django"));
         await _context.SaveChangesAsync();
-
-        var param = new PaginationParams(Page: 1, PageSize: 10, Title: "python");
+        
+        var param = new JobQueryParams
+            {
+                Page = 1,
+                PageSize = 10,
+                Search = "python"
+            };
 
         // Act
-        var (items, total) = await _repository.GetPagedAsync(param);
+        var result = await _repository.GetPagedAsync(param);
 
         // Assert
-        items.Should().HaveCount(1);
-        items.First().Title.Should().Be("Python Developer");
+        result.Items.Should().HaveCount(1);
+        result.Items.First().Title.Should().Be("Python Developer");
     }
 
     #endregion
@@ -250,14 +287,18 @@ public class JobRepositoryTests : IDisposable
     public async Task GetPagedAsync_WithEmptyDatabase_ShouldReturnEmpty()
     {
         // Arrange
-        var param = new PaginationParams(Page: 1, PageSize: 10);
+        var param = new JobQueryParams
+        {
+            Page = 1,
+            PageSize = 10
+        };
 
         // Act
-        var (items, total) = await _repository.GetPagedAsync(param);
+        var result = await _repository.GetPagedAsync(param);
 
         // Assert
-        items.Should().BeEmpty();
-        total.Should().Be(0);
+        result.Items.Should().BeEmpty();
+        result.TotalCount.Should().Be(0);
     }
 
     [Fact]
@@ -268,14 +309,18 @@ public class JobRepositoryTests : IDisposable
         _context.Jobs.AddRange(jobs);
         await _context.SaveChangesAsync();
 
-        var param = new PaginationParams(Page: 1, PageSize: 1);
+        var param = new JobQueryParams
+        {
+            Page = 1,
+            PageSize = 1
+        };
 
         // Act
-        var (items, total) = await _repository.GetPagedAsync(param);
+        var result = await _repository.GetPagedAsync(param);
 
         // Assert
-        items.Should().HaveCount(1);
-        total.Should().Be(5);
+        result.Items.Should().HaveCount(1);
+        result.TotalCount.Should().Be(5);
     }
 
     #endregion
@@ -290,15 +335,19 @@ public class JobRepositoryTests : IDisposable
         var job2 = await _repository.CreateAsync(TestDataHelper.CreateJob("Job 2", "Desc 2"));
         var job3 = await _repository.CreateAsync(TestDataHelper.CreateJob("Job 3", "Desc 3"));
 
-        var param = new PaginationParams(Page: 1, PageSize: 10);
-        var (items, total) = await _repository.GetPagedAsync(param);
+        var param = new JobQueryParams
+        {
+            Page = 1,
+            PageSize = 10
+        };
+        var result = await _repository.GetPagedAsync(param);
 
         // Assert
-        items.Should().HaveCount(3);
-        total.Should().Be(3);
-        items.Should().Contain(j => j.Id == job1.Id);
-        items.Should().Contain(j => j.Id == job2.Id);
-        items.Should().Contain(j => j.Id == job3.Id);
+        result.Items.Should().HaveCount(3);
+        result.TotalCount.Should().Be(3);
+        result.Items.Should().Contain(j => j.Id == job1.Id);
+        result.Items.Should().Contain(j => j.Id == job2.Id);
+        result.Items.Should().Contain(j => j.Id == job3.Id);
     }
 
     #endregion

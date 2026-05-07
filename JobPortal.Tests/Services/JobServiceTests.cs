@@ -1,4 +1,5 @@
 using FluentAssertions;
+using JobPortal.Application.Common;
 using JobPortal.Application.Common.Exceptions;
 using JobPortal.Application.DTOs;
 using JobPortal.Application.Interfaces;
@@ -17,6 +18,7 @@ public class JobServiceTests
     private readonly Mock<IJobRepository> _mockJobRepo;
     private readonly Mock<IJobApplicationRepository> _mockApplicationRepo;
     private readonly Mock<IFileStorageService> _mockFileStorage;
+    private readonly Mock<IFileValidator> _fileValidator;
     private readonly JobService _service;
 
     public JobServiceTests()
@@ -24,11 +26,12 @@ public class JobServiceTests
         _mockJobRepo = new Mock<IJobRepository>();
         _mockApplicationRepo = new Mock<IJobApplicationRepository>();
         _mockFileStorage = new Mock<IFileStorageService>();
-
+        _fileValidator = new Mock<IFileValidator>();
         _service = new JobService(
             _mockJobRepo.Object,
             _mockApplicationRepo.Object,
-            _mockFileStorage.Object
+            _mockFileStorage.Object,
+            _fileValidator.Object
         );
     }
 
@@ -94,20 +97,29 @@ public class JobServiceTests
     {
         // Arrange
         var jobs = TestDataHelper.CreateMultipleJobs(5);
-        var paginationParams = new PaginationParams(Page: 1, PageSize: 10);
+        
+        var queryParams = new JobQueryParams
+        {
+            Page = 1,
+            PageSize = 10
+        };
 
         _mockJobRepo
-            .Setup(x => x.GetPagedAsync(paginationParams))
-            .ReturnsAsync((jobs, 5));
+            .Setup(x => x.GetPagedAsync(It.IsAny<JobQueryParams>()))
+            .ReturnsAsync(new PagedResult<Job>
+            {
+                Items = jobs,
+                TotalCount = 5
+            });
 
         // Act
-        var result = await _service.GetJobs(paginationParams);
+        var result = await _service.GetJobs(queryParams);
 
         // Assert
         result.Should().NotBeNull();
         var resultObj = result as dynamic;
-        ((int)resultObj.Total).Should().Be(5);
-        ((List<JobResponse>)resultObj.Data).Should().HaveCount(5);
+        ((int)resultObj.TotalCount).Should().Be(5);
+        ((List<JobResponse>)resultObj.Items).Should().HaveCount(5);
     }
 
     [Fact]
@@ -115,18 +127,26 @@ public class JobServiceTests
     {
         // Arrange
         var job = TestDataHelper.CreateJob("Backend Developer", "Node.js position", "user-1");
-        var paginationParams = new PaginationParams(Page: 1, PageSize: 10);
+        var queryParams = new JobQueryParams{
+                            Page = 1,
+                            PageSize = 10
+                        };
 
         _mockJobRepo
-            .Setup(x => x.GetPagedAsync(paginationParams))
-            .ReturnsAsync((new List<Job> { job }, 1));
+            .Setup(x => x.GetPagedAsync(It.IsAny<JobQueryParams>()))
+            .ReturnsAsync(new PagedResult<Job>
+            {
+                Items = new List<Job> { job },
+                TotalCount = 1
+            });
 
+            
         // Act
-        var result = await _service.GetJobs(paginationParams);
+        var result = await _service.GetJobs(queryParams);
 
         // Assert
         var resultObj = result as dynamic;
-        var data = (List<JobResponse>)resultObj.Data;
+        var data = (List<JobResponse>)resultObj.Items;
         
         data.Should().HaveCount(1);
         data[0].Id.Should().Be(job.Id);

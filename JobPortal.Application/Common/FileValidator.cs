@@ -1,10 +1,11 @@
 using JobPortal.Application.Common.Exceptions;
 using JobPortal.Application.Common.Settings;
+using JobPortal.Application.Interfaces;
 using Microsoft.Extensions.Options;
 
 namespace JobPortal.Application.Common;
 
-public class FileValidator
+public class FileValidator : IFileValidator
 {
     private readonly FileStorageSettings _settings;
 
