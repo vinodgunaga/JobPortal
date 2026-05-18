@@ -93,9 +93,47 @@ public class AuthService : IAuthService
         _context.RefreshTokens.Add(refreshToken);
         await _context.SaveChangesAsync();
 
-        return Result<object>.Ok(new { accessToken, refreshToken = refreshToken.Token });
+        return Result<object>.Ok(new 
+        { 
+            user = new 
+            {
+                id = user.Id,
+                email = user.Email,
+                userName = user.UserName,
+                roles = roles,
+            }, 
+            accessToken, 
+            refreshToken = refreshToken.Token 
+        });
     }
 
+    public async Task<Result<object>> GetCurrentUser(ClaimsPrincipal claimsPrincipal)
+    {
+        var userId = claimsPrincipal.FindFirstValue(ClaimTypes.NameIdentifier);
+        
+        if (string.IsNullOrEmpty(userId))
+            return Result<object>.Unauthorized("User not found");
+        
+        var user = await _userManager.FindByIdAsync(userId);
+        
+        if (user == null)
+            return Result<object>.NotFound("User not found");
+        
+        var roles = await _userManager.GetRolesAsync(user);
+        
+        return Result<object>.Ok(new
+        {
+            user = new
+            {
+                id = user.Id,
+                email = user.Email,
+                userName = user.UserName,
+                isEmailVerified = user.EmailConfirmed,
+                roles = roles.ToList()
+            },
+            
+        });
+    }
     public async Task<Result<string>> VerifyEmail(string email, string token)
     {
         var user = await _userManager.FindByEmailAsync(email);

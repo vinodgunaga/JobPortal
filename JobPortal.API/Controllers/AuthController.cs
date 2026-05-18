@@ -24,6 +24,11 @@ public class AuthController : BaseController
     public async Task<IActionResult> Login(LoginRequest request)
         => FromResult(await _authService.Login(request.Email!, request.Password!));
 
+    [HttpGet("me")]
+    [Authorize]
+    public async Task<IActionResult> GetCurrentUser()
+        => FromResult(await _authService.GetCurrentUser(User));
+
     [HttpGet("verify-email")]
     public async Task<IActionResult> VerifyEmail([FromQuery] string email, [FromQuery] string token)
         => FromResult(await _authService.VerifyEmail(email, token));

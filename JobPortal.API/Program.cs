@@ -67,12 +67,18 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.Configure<FileStorageSettings>(
     builder.Configuration.GetSection("FileStorage"));
 builder.Services.AddScoped<IFileStorageService, LocalFileStorageService>();
-builder.Services.AddScoped<FileValidator>();
+builder.Services.AddScoped<IFileValidator, FileValidator>();
 
 var app = builder.Build();
 
 app.UseMiddleware<ExceptionMiddleware>();
 app.UseHttpsRedirection();
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(Directory.GetCurrentDirectory(), "uploads")),
+    RequestPath = "/uploads"
+});
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
@@ -85,12 +91,6 @@ if (app.Environment.IsDevelopment())
 
 await app.Services.ApplyMigrationsAsync();
 await app.Services.SeedRolesAsync();
-app.UseStaticFiles(new StaticFileOptions
-{
-    FileProvider = new PhysicalFileProvider(
-        Path.Combine(Directory.GetCurrentDirectory(), "uploads")),
-    RequestPath = "/uploads"
-});
 
 app.Run();
 

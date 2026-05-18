@@ -61,6 +61,30 @@ public class JobService : IJobService
         };
     }
 
+    public async Task<JobResponse> GetJobById(Guid jobId)
+    {
+        var job = await _jobRepo.GetByIdAsync(jobId);
+        if (job == null)
+            throw new NotFoundException("Job not found");
+
+        return new JobResponse(
+            job.Id,
+            job.Title,
+            job.Description,
+            job.CreatedBy,
+            job.CreatedAt,
+            job.Location,
+            job.JobType,
+            job.ExperienceLevel,
+            job.MinSalary,
+            job.MaxSalary,
+            job.Company,
+            job.IsActive,
+            job.Deadline,
+            job.Skills
+        );
+    }
+
     // Keep old method for backward compatibility
     public async Task<object> GetJobs(PaginationParams param)
     {

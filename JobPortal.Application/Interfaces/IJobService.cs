@@ -10,6 +10,8 @@ public interface IJobService
     Task<PagedResult<JobResponse>> GetJobs(JobQueryParams queryParams);
     
     Task<object> GetJobs(PaginationParams param);
+
+    Task<JobResponse> GetJobById(Guid jobId);
     
     Task ApplyJob(Guid jobId, string userId, Stream fileStream, string fileName);
 }

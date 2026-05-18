@@ -50,7 +50,17 @@ public class JobsController : BaseController
     {
         var result = await _jobService.GetJobs(queryParams);
         return Ok(result);
-    }   
+    }
+
+    [HttpGet("{jobId}")]
+    public async Task<IActionResult> GetJobById(Guid jobId)
+    {
+        var job = await _jobService.GetJobById(jobId);
+        if (job == null)
+            return NotFound();
+
+        return Ok(job);
+    }
 
     [Authorize(Roles = "User")]
     [HttpPost("{jobId}/apply")]
