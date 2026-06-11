@@ -55,7 +55,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: ./src/JobPortal.API/Dockerfile # adjust path to your Dockerfile
+          file: Dockerfile #Dockerfile path (if not in root ./src/JobPortal.API/Dockerfile)
           push: true
           tags: |
             ${{ env.ACR_IMAGE }}:latest
