@@ -86,8 +86,7 @@ jobs:
         run: dotnet restore JobPortal.API/JobPortal.API.csproj
 
       - name: Build
-        run: dotnet build JobPortal.API/JobPortal.API.csproj \
-          --configuration Release --no-restore
+        run: dotnet build JobPortal.API/JobPortal.API.csproj --configuration Release --no-restore
 
       - name: Run EF migrations
         env:
