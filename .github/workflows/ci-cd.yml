@@ -79,14 +79,24 @@ jobs:
       - name: Install EF tools
         run: dotnet tool install --global dotnet-ef
 
+      - name: Add dotnet tools to PATH
+        run: echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
+
+      - name: Restore dependencies
+        run: dotnet restore JobPortal.API/JobPortal.API.csproj
+
+      - name: Build
+        run: dotnet build JobPortal.API/JobPortal.API.csproj \
+          --configuration Release --no-restore
+
       - name: Run EF migrations
         env:
           ConnectionStrings__DefaultConnection: ${{ secrets.AZURE_SQL_CONNECTION_STRING }}
         run: |
           dotnet ef database update \
-            --project JobPortal.Infrastructure \
-            --startup-project JobPortal.API \
-            --no-build
+            --project JobPortal.Infrastructure/JobPortal.Infrastructure.csproj \
+            --startup-project JobPortal.API/JobPortal.API.csproj \
+            --verbose
 
   # ──────────────────────────────────────────
   # JOB 4: Deploy to Azure App Service
