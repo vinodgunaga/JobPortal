@@ -89,6 +89,12 @@ jobs:
       - name: Build
         run: dotnet build JobPortal.API/JobPortal.API.csproj --configuration Release --no-restore
 
+      - name: Debug connection string
+        run: |
+          echo "Connection string length: ${#ConnectionStrings__Default}"
+        env:
+          ConnectionStrings__Default: ${{ secrets.AZURE_SQL_CONNECTION_STRING }}
+
       - name: Run EF migrations
         env:
           ConnectionStrings__DefaultConnection: ${{ secrets.AZURE_SQL_CONNECTION_STRING }}
