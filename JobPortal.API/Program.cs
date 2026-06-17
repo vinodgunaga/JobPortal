@@ -68,6 +68,8 @@ builder.Services.Configure<FileStorageSettings>(
     builder.Configuration.GetSection("FileStorage"));
 builder.Services.AddScoped<IFileStorageService, LocalFileStorageService>();
 builder.Services.AddScoped<IFileValidator, FileValidator>();
+builder.Services.AddHealthChecks()
+    .AddSqlServer(builder.Configuration.GetConnectionString("Default")!);
 
 var app = builder.Build();
 
@@ -82,6 +84,7 @@ app.UseStaticFiles(new StaticFileOptions
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+app.MapHealthChecks("/health");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
