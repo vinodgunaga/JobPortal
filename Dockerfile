@@ -22,4 +22,5 @@ RUN dotnet publish "JobPortal.API/JobPortal.API.csproj" -c $BUILD_CONFIGURATION 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+RUN mkdir -p /app/uploads
 ENTRYPOINT ["dotnet", "JobPortal.API.dll"]
