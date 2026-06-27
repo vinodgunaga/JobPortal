@@ -63,7 +63,7 @@ builder.Services.AddValidatorsFromAssemblyContaining<CreateJobRequestValidator>(
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.Configure<EmailSettings>(
 builder.Configuration.GetSection("Email"));
-builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddHttpClient<IEmailService, EmailService>();
 builder.Services.Configure<FileStorageSettings>(
     builder.Configuration.GetSection("FileStorage"));
 builder.Services.AddScoped<IFileStorageService, LocalFileStorageService>();
