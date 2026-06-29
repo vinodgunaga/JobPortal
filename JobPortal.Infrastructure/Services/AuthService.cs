@@ -37,12 +37,13 @@ public class AuthService : IAuthService
         _appUrl = configuration["AppUrl"]!;
     }
 
-    public async Task<Result<string>> Register(string email, string password)
+    public async Task<Result<object>> Register(string email, string password)
     {
         var user = new AppUser
         {
             UserName = email,
-            Email = email
+            Email = email,
+            IsEmailVerified = true //Set to true default because of free tier restrictions in production
         };
 
         var result = await _userManager.CreateAsync(user, password);
@@ -50,11 +51,12 @@ public class AuthService : IAuthService
         if (!result.Succeeded)
         {
             var errors = string.Join(", ", result.Errors.Select(e => e.Description));
-            return Result<string>.Fail(errors);
+            return Result<object>.Fail(errors);
         }
 
         await _userManager.AddToRoleAsync(user, "User");
 
+        /*
         var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
 
         // Encode the token — it can contain special characters
@@ -65,8 +67,9 @@ public class AuthService : IAuthService
 
         // Send verification email
         await _emailService.SendEmailVerificationAsync(email, verificationLink);
+    */
 
-        return Result<string>.Ok("Registration successful. Please check your email to verify your account.");
+        return await Login(email, password); // Automatically log in the user after registration
     }
 
     public async Task<Result<object>> Login(string email, string password)

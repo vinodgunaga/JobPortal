@@ -66,7 +66,7 @@ builder.Configuration.GetSection("Email"));
 builder.Services.AddHttpClient<IEmailService, EmailService>();
 builder.Services.Configure<FileStorageSettings>(
     builder.Configuration.GetSection("FileStorage"));
-builder.Services.AddScoped<IFileStorageService, LocalFileStorageService>();
+builder.Services.AddScoped<IFileStorageService, AzureBlobStorageService>();
 builder.Services.AddScoped<IFileValidator, FileValidator>();
 builder.Services.AddHealthChecks()
     .AddSqlServer(builder.Configuration.GetConnectionString("Default")!);
